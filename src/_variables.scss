@@ -1,13 +1,13 @@
 :root {
-	--map-legend-maxwidth: 50%;
+	--map-legend-maxwidth: 300px;
 	--map-legend-maxheight: 90vh;
-	--map-legend-margin: 0.75rem;
+	--map-legend-margin: 5px;
 	--map-legend-font: 12px / 1 'Arial Unicode MS Regular', sans-serif;
 
 	/* Pane */
-	--map-legend-minwidth: 150px;
+	--map-legend-minwidth: 250px;
 	--map-legend-background: #fff;
-	--map-legend-radius: 4px;
+	--map-legend-radius: 0px;
 	--map-legend-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 	--map-legend-border: 1px solid #eee;
 

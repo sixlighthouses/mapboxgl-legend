@@ -5,6 +5,7 @@ const stopper = {
 	interpolate: expression => chunk(expression.slice(2), 2),
 	match: expression => chunk(expression.slice(1), 2).map(toPair),
 	step: expression => toBins([...chunk(expression.slice(2), 2), [null, expression[1]]]),
+	case: expression => toBins([...chunk(expression.slice(2), 2), [null, expression[1]]]),
 };
 
 const isExpression = exp => Array.isArray(exp) && exp.length && typeof exp[0] === 'string';

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import './styles.scss';
 import components from './components';
 import Expression from './expression';
@@ -42,26 +43,61 @@ export default class LegendControl {
 				const selector = `${this._class}-pane--${id}`;
 				const prevPane = document.querySelector(`.${selector}`);
 				const open = prevPane ? prevPane.open : !collapsed;
-				const pane = createElement('details', {
-					classes: [`${this._class}-pane`, selector],
-					attributes: { open },
-					content: [
-						// Panel header
-						createElement('summary', {
-							content: [
-								(metadata && metadata.name) || id, // Layer name or identifier
-								...(toggler ? [this._toggleButton(id)] : []), // Toggler button
-							],
-						}),
-						// Panel content
-						...Object.entries({ ...layout, ...paint }).map(([attr, expression]) => {
-							const [, property] = attr.split('-');
-							const parsedExpression = Expression.parse(expression);
-							const component = components[property];
-							return component && component(parsedExpression, layer, this._map);
-						}),
-					],
-				});
+				let single = false;
+				let pane;
+				try {
+					single = metadata.single;
+				} catch (error) {
+					// pass;
+				}
+				if (single) {
+					pane = createElement('details', {
+						classes: [`${this._class}-pane`, selector],
+						attributes: { open },
+						content: [
+							createElement('summary', {
+								content: [
+									...Object.entries({ ...paint }).map(([attr, expression]) => {
+										const [, property] = attr.split('-');
+										const parsedExpression = Expression.parse(expression);
+										if (parsedExpression.name === 'match') {
+											try {
+												const arr = parsedExpression.stops.filter(stop => stop[0] !== null);
+												parsedExpression.stops = arr;
+											} catch (error) {
+												// pass
+											}
+										}
+										const component = components[property];
+										return component && component(parsedExpression, layer, this._map);
+									}),
+									...(toggler ? [this._toggleButton(id)] : []), // Toggler button
+								],
+							}),
+						],
+					});
+				} else {
+					pane = createElement('details', {
+						classes: [`${this._class}-pane`, selector],
+						attributes: { open },
+						content: [
+							// Panel header
+							createElement('summary', {
+								content: [
+									(metadata && metadata.name) || id, // Layer name or identifier
+									...(toggler ? [this._toggleButton(id)] : []), // Toggler button
+								],
+							}),
+							// Panel content
+							...Object.entries({ ...layout, ...paint }).map(([attr, expression]) => {
+								const [, property] = attr.split('-');
+								const parsedExpression = Expression.parse(expression);
+								const component = components[property];
+								return component && component(parsedExpression, layer, this._map);
+							}),
+						],
+					});
+				}
 				if (prevPane) this._container.replaceChild(pane, prevPane);
 				else this._container.appendChild(pane);
 			});
